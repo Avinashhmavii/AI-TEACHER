@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Teaching Agent Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        p {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]::placeholder {
+            color: #ccc;
+        }
+        input[type="text"]:focus {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: #00c4cc;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #00a3aa;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: #00c4cc;
+        }
+        .response-section {
+            margin-top: 20px;
+            display: none;
+        }
+        .response-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #00c4cc;
+        }
+        .response-content {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👨‍🏫 AI Teaching Agent Team</h1>
+        <p>Enter a topic below, and our AI agents will generate a knowledge base, learning roadmap, resources, and practice materials for you.</p>
+        <div class="input-group">
+            <input type="text" id="topic" placeholder="e.g., Machine Learning">
+            <button onclick="generateResponses()">Start</button>
+        </div>
+        <div id="loading">Generating responses, please wait...</div>
+        <div id="responses" class="response-section">
+            <h3>📚 Professor Response: Knowledge Base</h3>
+            <div id="professor" class="response-content"></div>
+            <hr>
+            <h3>🗺️ Academic Advisor Response: Learning Roadmap</h3>
+            <div id="academic_advisor" class="response-content"></div>
+            <hr>
+            <h3>📖 Research Librarian Response: Learning Resources</h3>
+            <div id="research_librarian" class="response-content"></div>
+            <hr>
+            <h3>📝 Teaching Assistant Response: Practice Materials</h3>
+            <div id="teaching_assistant" class="response-content"></div>
+        </div>
+    </div>
+
+    <script>
+        async function generateResponses() {
+            const topic = document.getElementById('topic').value.trim();
+            if (!topic) {
+                alert('Please enter a topic.');
+                return;
+            }
+
+            const loadingರೀಕ್ಷೇ loading = document.getElementById('loading');
+            const responsesDiv = document.getElementById('responses');
+            const professorDiv = document.getElementById('professor');
+            const academicAdvisorDiv = document.getElementById('academic_advisor');
+            const researchLibrarianDiv = document.getElementById('research_librarian');
+            const teachingAssistantDiv = document.getElementById('teaching_assistant');
+
+            loading.style.display = 'block';
+            responsesDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `topic=${encodeURIComponent(topic)}`
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.error);
+                    loading.style.display = 'none';
+                    return;
+                }
+
+                const data = await response.json();
+                professorDiv.textContent = data.professor;
+                academicAdvisorDiv.textContent = data.academic_advisor;
+                researchLibrarianDiv.textContent = data.research_librarian;
+                teachingAssistantDiv.textContent = data.teaching_assistant;
+
+                loading.style.display = 'none';
+                responsesDiv.style.display = 'block';
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
