@@ -84,6 +84,21 @@
             font-size: 1.2rem;
             color: #00c4cc;
         }
+        #loading::after {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00c4cc;
+            margin-left: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
         .response-section {
             margin-top: 20px;
             display: none;
@@ -115,7 +130,7 @@
             <input type="text" id="topic" placeholder="e.g., Machine Learning">
             <button onclick="generateResponses()">Start</button>
         </div>
-        <div id="loading">Generating responses, please wait...</div>
+        <div id="loading">Processing...</div>
         <div id="responses" class="response-section">
             <h3>📚 Professor Response: Knowledge Base</h3>
             <div id="professor" class="response-content"></div>
@@ -139,15 +154,20 @@
                 return;
             }
 
-            const loadingರೀಕ್ಷೇ loading = document.getElementById('loading');
+            const loading = document.getElementById('loading');
             const responsesDiv = document.getElementById('responses');
             const professorDiv = document.getElementById('professor');
             const academicAdvisorDiv = document.getElementById('academic_advisor');
             const researchLibrarianDiv = document.getElementById('research_librarian');
             const teachingAssistantDiv = document.getElementById('teaching_assistant');
 
+            // Show "Processing..." immediately
             loading.style.display = 'block';
             responsesDiv.style.display = 'none';
+            professorDiv.textContent = '';
+            academicAdvisorDiv.textContent = '';
+            researchLibrarianDiv.textContent = '';
+            teachingAssistantDiv.textContent = '';
 
             try {
                 const response = await fetch('/generate', {
