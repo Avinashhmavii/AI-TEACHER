@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Teaching Agent Team</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -113,7 +114,32 @@
             padding: 15px;
             border-radius: 8px;
             line-height: 1.6;
-            white-space: pre-wrap;
+            color: #ddd;
+        }
+        .response-content h1, .response-content h2, .response-content h3 {
+            color: #fff;
+            margin: 15px 0 10px;
+        }
+        .response-content h1 {
+            font-size: 1.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        .response-content h2 {
+            font-size: 1.4rem;
+        }
+        .response-content h3 {
+            font-size: 1.2rem;
+        }
+        .response-content p {
+            margin: 10px 0;
+            text-align: left;
+        }
+        .response-content ul, .response-content ol {
+            margin: 10px 0 10px 20px;
+        }
+        .response-content li {
+            margin: 5px 0;
         }
         hr {
             border: none;
@@ -164,10 +190,10 @@
             // Show "Processing..." immediately
             loading.style.display = 'block';
             responsesDiv.style.display = 'none';
-            professorDiv.textContent = '';
-            academicAdvisorDiv.textContent = '';
-            researchLibrarianDiv.textContent = '';
-            teachingAssistantDiv.textContent = '';
+            professorDiv.innerHTML = '';
+            academicAdvisorDiv.innerHTML = '';
+            researchLibrarianDiv.innerHTML = '';
+            teachingAssistantDiv.innerHTML = '';
 
             try {
                 const response = await fetch('/generate', {
@@ -184,10 +210,11 @@
                 }
 
                 const data = await response.json();
-                professorDiv.textContent = data.professor;
-                academicAdvisorDiv.textContent = data.academic_advisor;
-                researchLibrarianDiv.textContent = data.research_librarian;
-                teachingAssistantDiv.textContent = data.teaching_assistant;
+                // Render Markdown to HTML using marked.js
+                professorDiv.innerHTML = marked.parse(data.professor);
+                academicAdvisorDiv.innerHTML = marked.parse(data.academic_advisor);
+                researchLibrarianDiv.innerHTML = marked.parse(data.research_librarian);
+                teachingAssistantDiv.innerHTML = marked.parse(data.teaching_assistant);
 
                 loading.style.display = 'none';
                 responsesDiv.style.display = 'block';
